@@ -7,22 +7,6 @@
 		</swiper-item>
 	  </swiper>
 
-    <!-- 顶部导航栏 -->
-    <!-- <view class="header">
-      <view class="location">
-        <text class="location-text">深圳</text>
-        <text class="location-arrow">▼</text>
-      </view>
-      <view class="search-bar">
-        <text class="search-icon">🔍</text>
-        <text class="search-placeholder">搜索</text>
-      </view>
-      <view class="header-actions">
-        <text class="header-icon">📷</text>
-        <text class="header-icon">💬</text>
-      </view>
-    </view> -->
-
     <!-- 主要功能区 -->
     <view class="main-func">
       <view class="main-func-item" v-for="(item, index) in mainFuncList" :key="index">
