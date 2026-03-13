@@ -12,36 +12,36 @@
 
     <!-- Banner -->
     <view class="banner">
-      <image src="/static/1.png" mode="aspectFill" class="banner-img" />
+      <image src="/static/1.jpg" mode="aspectFill" class="banner-img" />
     </view>
 
     <!-- 功能按钮区 -->
     <view class="func-buttons">
-      <view class="func-item">
+      <view class="func-item" @click="funcClick">
         <view class="func-icon blue">A+</view>
         <text class="func-text">智能起名+</text>
       </view>
-      <view class="func-item">
+      <view class="func-item" @click="funcClick">
         <view class="func-icon orange">宝</view>
         <text class="func-text">宝宝起名</text>
       </view>
-      <view class="func-item">
+      <view class="func-item" @click="funcClick">
         <view class="func-icon red">100</view>
         <text class="func-text">名字打分</text>
       </view>
-      <view class="func-item">
+      <view class="func-item" @click="funcClick">
         <view class="func-icon yellow">📅</view>
         <text class="func-text">黄历查询</text>
       </view>
     </view>
 
     <!-- 标签切换 -->
-    <view class="tab-bar">
-      <view class="tab-item active">宝宝起名</view>
-      <view class="tab-item">名字评分</view>
+    <!-- <view class="tab-bar">
+      <view class="tab-item active" @click="toggleModule('1')">宝宝起名</view>
+      <view class="tab-item" @click="toggleModule('2')">名字评分</view>
       <view class="tab-item">智能起名</view>
       <view class="tab-item">智能测名</view>
-    </view>
+    </view> -->
 
     <!-- 表单区域 -->
     <view class="form-card">
@@ -78,10 +78,10 @@
 		</radio-group>
       </view>
       
-      <view class="form-row">
+      <!-- <view class="form-row">
         <text class="form-label">期望标签</text>
         <input v-model="formData.tags" placeholder="性格特征、风格期望(可以不选)" class="form-input" />
-      </view>
+      </view> -->
       
       <button @click="generateName" class="submit-btn">
         立即起名
@@ -241,6 +241,15 @@ function nameTypeChange(e) {
 	console.log('nameTypeChange', e)
 	formData.value.nameType = e.detail.value
 }
+function toggleModule(e) {
+	console.log('toggleModule----', e)
+}
+function funcClick() {
+	uni.showToast({
+		title: '功能开发中，敬请期待...',
+		icon: 'none'
+	})
+}
 </script>
 
 <style scoped>
@@ -391,7 +400,7 @@ function nameTypeChange(e) {
   display: flex;
   align-items: center;
   margin-bottom: 30rpx;
-  padding-bottom: 30rpx;
+  padding-bottom: 20rpx;
   border-bottom: 1rpx solid #f0f0f0;
 }
 
@@ -464,7 +473,7 @@ function nameTypeChange(e) {
   background-color: #1a365d;
   color: #fff;
   border-radius: 8rpx;
-  padding: 25rpx 0;
+  padding: 10rpx 0;
   font-size: 32rpx;
   font-weight: bold;
   margin-top: 30rpx;
