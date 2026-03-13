@@ -1,7 +1,8 @@
 // 豆包API配置（替换成你自己的key）
-const API_KEY = "9549d6df-95a7-4abd-86bb-17245fac39ba0000" // 测试后面加0000
-const API_URL = "https://ark.cn-beijing.volces.com/api/v3/chat/completions"
-
+import { API_CONFIG } from './config.js'
+const API_KEY = API_CONFIG.API_KEY
+const API_URL = API_CONFIG.API_URL
+console.log('API_KEY--------', API_KEY)
 // 统一请求豆包API
 export async function requestDoubao(messages) {
   try {

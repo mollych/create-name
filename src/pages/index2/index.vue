@@ -1,63 +1,133 @@
 <template>
   <view class="page">
-    <!-- 输入区 -->
-    <view class="card">
-      <view class="title">快速起名</view>
-      <view class="item">
-        <text>姓氏：</text>
-        <input v-model="formData.surname" placeholder="请输入姓氏" class="input" />
+    <!-- 顶部导航栏 -->
+    <!-- <view class="header">
+      <text class="header-title">新生儿起名工具大全</text>
+      <view class="header-actions">
+        <text class="header-icon">⋮</text>
+        <text class="header-icon">−</text>
+        <text class="header-icon">⊕</text>
       </view>
-	  <view class="form-item">
-	    <text class="form-label">性别</text>
-		<radio-group @change="genderChange">
-			<label class="uni-list-cell uni-list-cell-pd" v-for="(item, index) in genderList" :key="item.value">
-				<radio :value="item.value" :checked="item.value === formData.gender" />{{item.label}}
+    </view> -->
+
+    <!-- Banner -->
+    <view class="banner">
+      <image src="/static/1.png" mode="aspectFill" class="banner-img" />
+    </view>
+
+    <!-- 功能按钮区 -->
+    <view class="func-buttons">
+      <view class="func-item">
+        <view class="func-icon blue">A+</view>
+        <text class="func-text">智能起名+</text>
+      </view>
+      <view class="func-item">
+        <view class="func-icon orange">宝</view>
+        <text class="func-text">宝宝起名</text>
+      </view>
+      <view class="func-item">
+        <view class="func-icon red">100</view>
+        <text class="func-text">名字打分</text>
+      </view>
+      <view class="func-item">
+        <view class="func-icon yellow">📅</view>
+        <text class="func-text">黄历查询</text>
+      </view>
+    </view>
+
+    <!-- 标签切换 -->
+    <view class="tab-bar">
+      <view class="tab-item active">宝宝起名</view>
+      <view class="tab-item">名字评分</view>
+      <view class="tab-item">智能起名</view>
+      <view class="tab-item">智能测名</view>
+    </view>
+
+    <!-- 表单区域 -->
+    <view class="form-card">
+      <view class="form-row">
+        <text class="form-label">姓氏</text>
+        <input v-model="formData.surname" placeholder="请输入姓氏" class="form-input" />
+      </view>
+      
+      <view class="form-row">
+        <text class="form-label">性别</text>
+		<radio-group @change="genderChange" class="radio-group">
+			<label class="radio-item" v-for="(item, index) in genderList" :key="item.value">
+				<radio :value="item.value" :checked="item.value === formData.gender" /><text>{{item.label}}</text>
 			</label>
 		</radio-group>
-	  </view>
-	  <view class="form-item">
-	    <text class="form-label">生日</text>
-	    <picker mode="date" :value="formData.birthday" @change="onBirthdayChange">
-	      <view class="picker-text">{{ formData.birthday || '请选择生日' }}</view>
-	    </picker>
-	  </view>
-	  <view class="form-item">
-	    <text class="form-label">名字形式</text>
-	    <!-- <view class="radio-group">
-	      <label class="radio-item" v-for="item in nameTypeList" :key="item.value">
-	        <radio 
-	          :value="item.value" 
-	          :checked="formData.nameType === item.value"
-	          @change="formData.nameType = item.value"
-	        />{{ item.label }}
-	      </label>
-	    </view> -->
-		<radio-group @change="nameTypeChange">
-			<label class="uni-list-cell uni-list-cell-pd" v-for="(item, index) in nameTypeList" :key="item.value">
-				<radio :value="item.value" :checked="item.value === formData.nameType" />{{item.label}}
+      </view>
+      
+      <view class="form-row">
+        <text class="form-label">生日</text>
+        <picker mode="date" :value="formData.birthday" @change="onBirthdayChange" class="date-picker">
+          <view class="picker-content">
+            <text>{{ formData.birthday || '请选择生日' }}</text>
+            <text class="calendar-icon">📅</text>
+          </view>
+        </picker>
+      </view>
+      
+      <view class="form-row">
+        <text class="form-label">名字形式</text>
+		<radio-group @change="nameTypeChange" class="radio-group">
+			<label class="radio-item" v-for="(item, index) in nameTypeList" :key="item.value">
+				<radio :value="item.value" :checked="item.value === formData.nameType" /><text>{{item.label}}</text>
 			</label>
 		</radio-group>
-	  </view>
-      <button @click="generateName" type="primary" class="btn">
+      </view>
+      
+      <view class="form-row">
+        <text class="form-label">期望标签</text>
+        <input v-model="formData.tags" placeholder="性格特征、风格期望(可以不选)" class="form-input" />
+      </view>
+      
+      <button @click="generateName" class="submit-btn">
         立即起名
       </button>
     </view>
 
+    <!-- 热门功能 -->
+    <!-- <view class="hot-functions">
+      <view class="hot-title">
+        <text>热门功能</text>
+      </view>
+      <view class="hot-items">
+        <view class="hot-item">
+          <view class="hot-icon book">📚</view>
+          <view class="hot-content">
+            <text class="hot-item-title">智能起名+</text>
+            <text class="hot-item-desc">更具现代审美标准的新生代起名方案</text>
+          </view>
+          <text class="hot-arrow">→</text>
+        </view>
+        <view class="hot-item">
+          <view class="hot-icon users">👨‍👩‍👧‍👦</view>
+          <view class="hot-content">
+            <text class="hot-item-title">宝宝起名</text>
+            <text class="hot-item-desc">姓氏+性别+生日，完美匹配100分美名</text>
+          </view>
+          <text class="hot-arrow">→</text>
+        </view>
+      </view>
+    </view> -->
+
     <!-- 结果区 -->
-	<view v-if="result">
-		<view class="card" v-for="(_item, index) in result" :key="_item.value">
-		  <view class="name">{{ _item.name }}</view>
-		  <view class="section"><text class="label">寓意：</text>{{ _item.meaning }}</view>
-		  <view class="section"><text class="label">诗词：</text>{{ _item.poem }}</view>
-		   <view class="section"><text class="label">字形：</text>{{ _item.glyph }}</view>
-		    <view class="section"><text class="label">音律：</text>{{ _item.temperament }}</view>
-			 <view class="section"><text class="label">五行：</text>{{ _item.fiveele }}</view>
-			  <view class="section"><text class="label">重名率：</text>{{ _item.samerate }}</view>
-		</view>
-		<view class="flex-row">
-		  <button size="mini" @click="generateName">换一换</button>
-		  <!-- <button size="mini" type="primary" @click="addToCompare">加入对比</button> -->
-		</view>
+	<view v-if="result" class="result-section">
+		<view class="card" v-for="(_item, index) in result" :key="index">
+	  <view class="name">{{ _item.name }}</view>
+	  <view class="section"><text class="label">寓意：</text>{{ _item.meaning }}</view>
+	  <view class="section"><text class="label">诗词：</text>{{ _item.poem }}</view>
+	   <view class="section"><text class="label">字形：</text>{{ _item.glyph }}</view>
+	    <view class="section"><text class="label">音律：</text>{{ _item.temperament }}</view>
+		 <view class="section"><text class="label">五行：</text>{{ _item.fiveele }}</view>
+		  <view class="section"><text class="label">重名率：</text>{{ _item.samerate }}</view>
+	</view>
+	<view class="flex-row">
+	  <button size="mini" @click="generateName" class="change-btn">换一换</button>
+	  <!-- <button size="mini" type="primary" @click="addToCompare">加入对比</button> -->
+	</view>
 	</view>
     
 
@@ -68,6 +138,26 @@
         {{ item.name }}｜{{ item.meaning }}
       </view>
     </view>
+
+    <!-- 底部导航栏 -->
+    <!-- <view class="bottom-nav">
+      <view class="nav-item active">
+        <text class="nav-icon">🏠</text>
+        <text class="nav-text">首页</text>
+      </view>
+      <view class="nav-item">
+        <text class="nav-icon">A+</text>
+        <text class="nav-text">智能起名</text>
+      </view>
+      <view class="nav-item">
+        <text class="nav-icon">🎧</text>
+        <text class="nav-text">联系我们</text>
+      </view>
+      <view class="nav-item">
+        <text class="nav-icon">👤</text>
+        <text class="nav-text">个人中心</text>
+      </view>
+    </view> -->
   </view>
 </template>
 
@@ -75,7 +165,6 @@
 import { ref, reactive } from 'vue'
 import { requestDoubao } from '@/util/api.js'
 
-const surname = ref('')
 const result = ref(null)
 const compareList = ref([])
 // 表单数据
@@ -84,6 +173,7 @@ const formData = ref({
   gender: '0',
   birthday: '',
   nameType: '3',
+  tags: ''
 })
 // 性别选项
 const genderList = ref([
@@ -111,14 +201,14 @@ async function generateName() {
       "name":"名字",
       "meaning":"寓意解析",
       "poem":"诗词溯源",
-	  "glyph": "字形"
+	  "glyph": "字形",
 	  "temperament": "音律",
 	  "fiveele": "五行",
 	  "samerate": "重名率"
     }]
   `
-  // console.log('prompt----', prompt)
-  console.log('formData-----', formData.value)
+  console.log('prompt----', prompt)
+  console.log('formData-----', formData)
   uni.showLoading({
   	title: '生成中...'
   })
@@ -154,21 +244,161 @@ function nameTypeChange(e) {
 </script>
 
 <style scoped>
-.page{padding:20rpx;}
-.card{background:#fff;border-radius:16rpx;padding:30rpx;margin-bottom:20rpx;}
-.title{font-size:32rpx;font-weight:500;margin-bottom:20rpx;}
-.item{display:flex;align-items:center;margin-bottom:20rpx;}
-.input{flex:1;border-bottom:1px solid #eee;padding:10rpx;}
-.btn{margin-top:10rpx;}
-.name{font-size:48rpx;color:#4e8aff;text-align:center;margin:20rpx 0;}
-.section{margin:10rpx 0;line-height:1.6;}
-.label{color:#4e8aff;font-weight:bold;}
-.flex-row{display:flex;gap:20rpx;margin-top:20rpx;}
-.compare-item{padding:10rpx;border-bottom:1px solid #eee;}
-.form-item {
-  margin-bottom: 30rpx;
+/* 全局样式 */
+.page {
+  padding: 0;
+  background-color: #f5f5f5;
+  min-height: 100vh;
+  position: relative;
+  padding-bottom: 100rpx;
+}
+
+/* 顶部导航栏 */
+.header {
+  background-color: #1a365d;
+  color: #fff;
+  padding: 20rpx;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.header-title {
+  font-size: 32rpx;
+  font-weight: bold;
+}
+
+.header-actions {
+  display: flex;
+  gap: 20rpx;
+}
+
+.header-icon {
+  font-size: 28rpx;
+}
+
+/* Banner */
+.banner {
+  width: 100%;
+  height: 300rpx;
+  overflow: hidden;
+}
+
+.banner-img {
+  width: 100%;
+  height: 100%;
+}
+
+/* 功能按钮区 */
+.func-buttons {
+  display: flex;
+  justify-content: space-around;
+  padding: 30rpx 20rpx;
+  background-color: #fff;
+  margin-bottom: 20rpx;
+}
+
+.func-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.func-icon {
+  width: 80rpx;
+  height: 80rpx;
+  border-radius: 50%;
   display: flex;
   align-items: center;
+  justify-content: center;
+  font-size: 36rpx;
+  font-weight: bold;
+  margin-bottom: 10rpx;
+  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.1);
+}
+
+.func-icon.blue {
+  background-color: #4285f4;
+  color: #fff;
+}
+
+.func-icon.orange {
+  background-color: #ff9800;
+  color: #fff;
+}
+
+.func-icon.red {
+  background-color: #f44336;
+  color: #fff;
+}
+
+.func-icon.yellow {
+  background-color: #ffeb3b;
+  color: #333;
+}
+
+.func-text {
+  font-size: 24rpx;
+  color: #333;
+}
+
+/* 标签切换 */
+.tab-bar {
+  display: flex;
+  background-color: #fff;
+  margin-bottom: 20rpx;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.05);
+}
+
+.tab-item {
+  flex: 1;
+  text-align: center;
+  padding: 20rpx 0;
+  font-size: 28rpx;
+  color: #666;
+  position: relative;
+}
+
+.tab-item.active {
+  color: #1a365d;
+  font-weight: bold;
+}
+
+.tab-item.active::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 20%;
+  width: 60%;
+  height: 4rpx;
+  background-color: #1a365d;
+  border-radius: 2rpx;
+}
+
+/* 表单卡片 */
+.form-card {
+  background-color: #fff;
+  margin: 0 20rpx 20rpx;
+  border-radius: 16rpx;
+  padding: 30rpx;
+  box-shadow: 0 2rpx 10rpx rgba(0, 0, 0, 0.05);
+}
+
+.form-row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 30rpx;
+  padding-bottom: 30rpx;
+  border-bottom: 1rpx solid #f0f0f0;
+}
+
+.form-row:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+  padding-bottom: 0;
 }
 
 .form-label {
@@ -180,41 +410,260 @@ function nameTypeChange(e) {
 .form-input {
   flex: 1;
   border: 2rpx solid #f0f0f0;
-  border-radius: 10rpx;
+  border-radius: 8rpx;
   padding: 20rpx;
   font-size: 28rpx;
   background-color: #f9f9f9;
 }
 
+/* 单选框组 */
 .radio-group {
+  flex: 1;
   display: flex;
-  gap: 30rpx;
+  gap: 40rpx;
 }
 
 .radio-item {
   display: flex;
   align-items: center;
   font-size: 28rpx;
+  color: #333;
 }
 
-.picker-text {
+.radio-item text {
+  margin-left: 8rpx;
+}
+
+/* 日期选择器 */
+.date-picker {
   flex: 1;
+}
+
+.picker-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   border: 2rpx solid #f0f0f0;
-  border-radius: 10rpx;
+  border-radius: 8rpx;
   padding: 20rpx;
-  font-size: 28rpx;
-  color: #999;
   background-color: #f9f9f9;
 }
 
+.picker-content text:first-child {
+  font-size: 28rpx;
+  color: #999;
+}
+
+.calendar-icon {
+  font-size: 28rpx;
+}
+
+/* 提交按钮 */
 .submit-btn {
   width: 100%;
-  background: linear-gradient(135deg, #1e88e5 0%, #2196f3 100%);
+  background-color: #1a365d;
   color: #fff;
-  border-radius: 10rpx;
+  border-radius: 8rpx;
   padding: 25rpx 0;
   font-size: 32rpx;
   font-weight: bold;
+  margin-top: 30rpx;
+  border: none;
+}
+
+/* 热门功能 */
+.hot-functions {
+  margin: 0 20rpx 20rpx;
+}
+
+.hot-title {
+  text-align: center;
+  margin-bottom: 20rpx;
+  position: relative;
+}
+
+.hot-title text {
+  background-color: #f5f5f5;
+  padding: 0 20rpx;
+  font-size: 28rpx;
+  color: #666;
+  position: relative;
+  z-index: 1;
+}
+
+.hot-title::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 1rpx;
+  background-color: #ddd;
+  z-index: 0;
+}
+
+.hot-items {
+  background-color: #fff;
+  border-radius: 16rpx;
+  overflow: hidden;
+  box-shadow: 0 2rpx 10rpx rgba(0, 0, 0, 0.05);
+}
+
+.hot-item {
+  display: flex;
+  align-items: center;
+  padding: 20rpx;
+  border-bottom: 1rpx solid #f0f0f0;
+}
+
+.hot-item:last-child {
+  border-bottom: none;
+}
+
+.hot-icon {
+  width: 60rpx;
+  height: 60rpx;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32rpx;
+  margin-right: 20rpx;
+}
+
+.hot-icon.book {
+  background-color: #e3f2fd;
+}
+
+.hot-icon.users {
+  background-color: #e8f5e8;
+}
+
+.hot-content {
+  flex: 1;
+}
+
+.hot-item-title {
+  font-size: 28rpx;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 5rpx;
+}
+
+.hot-item-desc {
+  font-size: 22rpx;
+  color: #666;
+  line-height: 1.4;
+}
+
+.hot-arrow {
+  font-size: 24rpx;
+  color: #999;
+}
+
+/* 结果区 */
+.result-section {
+  margin: 0 20rpx 20rpx;
+}
+
+.card {
+  background: #fff;
+  border-radius: 16rpx;
+  padding: 30rpx;
+  margin-bottom: 20rpx;
+  box-shadow: 0 2rpx 10rpx rgba(0, 0, 0, 0.05);
+}
+
+.name {
+  font-size: 48rpx;
+  color: #1a365d;
+  text-align: center;
+  margin: 20rpx 0;
+  font-weight: bold;
+}
+
+.section {
+  margin: 10rpx 0;
+  line-height: 1.6;
+}
+
+.label {
+  color: #1a365d;
+  font-weight: bold;
+}
+
+.flex-row {
+  display: flex;
+  gap: 20rpx;
   margin-top: 20rpx;
+  justify-content: center;
+}
+
+.change-btn {
+  padding: 15rpx 40rpx;
+  background-color: #f0f0f0;
+  color: #333;
+  border-radius: 8rpx;
+  font-size: 26rpx;
+  border: none;
+}
+
+/* 对比区 */
+.compare-item {
+  padding: 10rpx;
+  border-bottom: 1rpx solid #eee;
+}
+
+/* 底部导航栏 */
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: #fff;
+  display: flex;
+  justify-content: space-around;
+  padding: 15rpx 0;
+  box-shadow: 0 -2rpx 10rpx rgba(0, 0, 0, 0.1);
+  z-index: 100;
+}
+
+.nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 10rpx;
+}
+
+.nav-item.active {
+  color: #1a365d;
+}
+
+.nav-icon {
+  font-size: 32rpx;
+  margin-bottom: 5rpx;
+}
+
+.nav-text {
+  font-size: 20rpx;
+}
+
+/* 响应式调整 */
+@media (max-width: 375px) {
+  .func-icon {
+    width: 70rpx;
+    height: 70rpx;
+    font-size: 30rpx;
+  }
+  
+  .form-label {
+    width: 100rpx;
+    font-size: 24rpx;
+  }
+  
+  .form-input {
+    font-size: 24rpx;
+    padding: 15rpx;
+  }
 }
 </style>
