@@ -1,6 +1,6 @@
 {
 	"pages": [ //pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
-		{
+		/* {
 			"path": "pages/index/index",
 			"style": {
 				"navigationBarTitleText": "首页"
@@ -11,6 +11,18 @@
 			"style": {
 				"navigationBarTitleText": "智能起名"
 			}
+		}, */
+		{
+			"path": "pages/index2/index",
+			"style": {
+				"navigationBarTitleText": "首页2"
+			}
+		},
+		{
+			"path": "pages/ai-name/ai-name",
+			"style": {
+				"navigationBarTitleText": "智能起名2"
+			}
 		}
 	],
     "tabBar": {
@@ -19,7 +31,7 @@
 		"borderStyle": "black",
 		"backgroundColor": "#ffffff",
 		"list": [
-		  {
+		  /* {
 			"pagePath": "pages/index/index",
 			"iconPath": "",
 			"selectedIconPath": "",
@@ -30,6 +42,18 @@
 			"iconPath": "",
 			"selectedIconPath": "",
 			"text": "智能起名"
+		  }, */
+		  {
+		  			"pagePath": "pages/index2/index",
+		  			"iconPath": "",
+		  			"selectedIconPath": "",
+		  			"text": "首页2"
+		  },
+		  {
+		  			"pagePath": "pages/ai-name/ai-name",
+		  			"iconPath": "",
+		  			"selectedIconPath": "",
+		  			"text": "智能起名2"
 		  }
 		]
 	},
