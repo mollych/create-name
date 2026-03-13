@@ -183,6 +183,7 @@ const nameTypeList = ref([
   { label: '单字名', value: '2' },
   { label: '不限', value: 'all' }
 ])
+const limitNum = ref(10)
 
 // 看视频增加次数
 function watchVideo() {
@@ -248,7 +249,7 @@ function checkUsageLimit() {
   }
   
   // 检查是否超过限制
-  if (usageData.count >= 3) {
+  if (usageData.count >= limitNum.value) {
     uni.showToast({ icon: 'none', title: '今日免费次数已用完，请明天再来' })
     return false
   }
