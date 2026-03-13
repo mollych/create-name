@@ -1,5 +1,17 @@
 <template>
   <view class="page">
+    <!-- 次数用完提示弹窗 -->
+    <view v-if="showLimitModal" class="modal-mask" @click="showLimitModal = false">
+      <view class="modal-content" @click.stop>
+        <view class="modal-title">提示</view>
+        <view class="modal-text">今日免费次数已用完</view>
+        <view class="modal-btns">
+          <button class="modal-btn cancel" @click="showLimitModal = false">明天再来</button>
+          <button class="modal-btn confirm" @click="watchVideo">看视频+3次</button>
+        </view>
+      </view>
+    </view>
+
     <!-- 顶部导航栏 -->
     <!-- <view class="header">
       <text class="header-title">新生儿起名工具大全</text>
@@ -132,32 +144,14 @@
     
 
     <!-- 对比区 -->
-    <view class="card" v-if="compareList.length">
+   <!-- <view class="card" v-if="compareList.length">
       <view class="title">名字对比（{{ compareList.length }}/3）</view>
       <view v-for="(item,i) in compareList" :key="i" class="compare-item">
         {{ item.name }}｜{{ item.meaning }}
       </view>
-    </view>
+    </view> -->
 
     <!-- 底部导航栏 -->
-    <!-- <view class="bottom-nav">
-      <view class="nav-item active">
-        <text class="nav-icon">🏠</text>
-        <text class="nav-text">首页</text>
-      </view>
-      <view class="nav-item">
-        <text class="nav-icon">A+</text>
-        <text class="nav-text">智能起名</text>
-      </view>
-      <view class="nav-item">
-        <text class="nav-icon">🎧</text>
-        <text class="nav-text">联系我们</text>
-      </view>
-      <view class="nav-item">
-        <text class="nav-icon">👤</text>
-        <text class="nav-text">个人中心</text>
-      </view>
-    </view> -->
   </view>
 </template>
 
@@ -167,6 +161,7 @@ import { requestDoubao } from '@/util/api.js'
 
 const result = ref(null)
 const compareList = ref([])
+const showLimitModal = ref(false)
 // 表单数据
 const formData = ref({
   surname: '',
@@ -189,8 +184,115 @@ const nameTypeList = ref([
   { label: '不限', value: 'all' }
 ])
 
+// 看视频增加次数
+function watchVideo() {
+  showLimitModal.value = false
+  
+  // 显示激励视频广告（需要配置广告位ID）
+  // 这里使用模拟实现，实际需要配置微信广告组件
+  // 微信小程序激励视频广告
+  if (typeof uni.createRewardedVideoAd === 'function') {
+    try {
+      const ad = uni.createRewardedVideoAd({
+        adUnitId: 'your_ad_unit_id' // 需要在微信后台配置广告位ID
+      })
+      ad.onLoad(() => {
+        ad.show().catch(() => {
+          ad.load()
+        })
+      })
+      ad.onClose((res) => {
+        if (res && res.isEnded) {
+          // 视频播放完成，增加次数
+          const today = new Date().toDateString()
+          const usageData = uni.getStorageSync('nameGeneratorUsage') || { date: today, count: 0, bonusCount: 0 }
+          usageData.bonusCount += 3
+          uni.setStorageSync('nameGeneratorUsage', usageData)
+          uni.showToast({ title: '获得3次免费机会', icon: 'success' })
+        }
+      })
+      ad.onError((err) => {
+        console.log('广告加载失败', err)
+        // 广告失败时直接增加次数（模拟）
+        addBonusCount()
+      })
+    } catch (e) {
+      console.log('广告创建失败', e)
+      // 广告创建失败时直接增加次数（模拟）
+      addBonusCount()
+    }
+  } else {
+    // 非微信小程序环境或广告不可用，直接增加次数（模拟看视频）
+    addBonusCount()
+  }
+}
+
+// 增加奖励次数
+function addBonusCount() {
+  const today = new Date().toDateString()
+  const usageData = uni.getStorageSync('nameGeneratorUsage') || { date: today, count: 0, bonusCount: 0 }
+  usageData.bonusCount += 3
+  uni.setStorageSync('nameGeneratorUsage', usageData)
+  uni.showToast({ title: '获得3次免费机会', icon: 'success' })
+}
+
+// 检查使用次数
+function checkUsageLimit() {
+  const today = new Date().toDateString()
+  const usageData = uni.getStorageSync('nameGeneratorUsage') || { date: '', count: 0 }
+  
+  // 如果是新的一天，重置计数
+  if (usageData.date !== today) {
+    usageData.date = today
+    usageData.count = 0
+  }
+  
+  // 检查是否超过限制
+  if (usageData.count >= 3) {
+    uni.showToast({ icon: 'none', title: '今日免费次数已用完，请明天再来' })
+    return false
+  }
+  
+  // 增加使用次数
+  usageData.count++
+  uni.setStorageSync('nameGeneratorUsage', usageData)
+  return true
+}
+
 // 生成名字
 async function generateName() {
+// 检查使用次数限制
+  if (!checkUsageLimit()) return
+  /* // 检查使用次数限制
+  const today = new Date().toDateString()
+  const usageData = uni.getStorageSync('nameGeneratorUsage') || { date: today, count: 0, bonusCount: 0 }
+  
+  // 如果是新的一天，重置计数
+  if (usageData.date !== today) {
+    usageData.date = today
+    usageData.count = 0
+    usageData.bonusCount = 0
+  }
+  
+  // 调试信息
+  console.log('今日日期:', today)
+  console.log('存储的日期:', usageData.date)
+  console.log('当前使用次数:', usageData.count)
+  console.log('奖励次数:', usageData.bonusCount)
+  
+  // 计算剩余次数
+  const remainingCount = 3 - usageData.count + usageData.bonusCount
+  
+  // 检查是否超过限制
+  if (remainingCount <= 0) {
+    showLimitModal.value = true
+    return
+  }
+  
+  // 增加使用次数
+  usageData.count++
+  uni.setStorageSync('nameGeneratorUsage', usageData) */
+  
   if (!formData.value.surname) return uni.showToast({ icon: 'none', title: '请输入姓氏' })
   const genderName = formData.value.gender === '0' ? '男孩' : formData.value.gender === '1' ? '女孩' : ''
   const nameNum = formData.value.nameType === 'all' ? '2或3' : formData.value.nameType
@@ -260,6 +362,66 @@ function funcClick() {
   min-height: 100vh;
   position: relative;
   padding-bottom: 100rpx;
+}
+
+/* 弹窗样式 */
+.modal-mask {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background-color: #fff;
+  border-radius: 16rpx;
+  padding: 40rpx;
+  width: 70%;
+  max-width: 600rpx;
+  text-align: center;
+}
+
+.modal-title {
+  font-size: 32rpx;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 20rpx;
+}
+
+.modal-text {
+  font-size: 28rpx;
+  color: #666;
+  margin-bottom: 40rpx;
+}
+
+.modal-btns {
+  display: flex;
+  justify-content: space-around;
+  gap: 20rpx;
+}
+
+.modal-btn {
+  flex: 1;
+  padding: 20rpx 0;
+  font-size: 28rpx;
+  border-radius: 8rpx;
+  border: none;
+}
+
+.modal-btn.cancel {
+  background-color: #f0f0f0;
+  color: #666;
+}
+
+.modal-btn.confirm {
+  background-color: #1a365d;
+  color: #fff;
 }
 
 /* 顶部导航栏 */
