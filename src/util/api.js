@@ -6,7 +6,16 @@ console.log('API_KEY--------', API_KEY)
 // 统一请求豆包API
 export async function requestDoubao(messages) {
   try {
-	let res = {
+	  /* let res = {
+		  "data": 
+				{"choices":[{"finish_reason":"stop","index":0,"logprobs":null,"message":{"content":"[{\n    \"name\":\"杨紫\",\n    \"score\": \"85\",\n    \"chineseZodiac\": \"兔\",\n    \"constellation\": \"水瓶座\",\n    \"meaning\":\"杨姓是中国最常见的姓氏之一，具有深厚的历史文化底蕴。紫字在传统文化中代表着高贵、神秘和祥瑞，常用于形容珍贵、美好的事物。\",\n    \"poem\":\"暂无相关诗词\",\n    \"glyph\": \"杨紫的字形简洁明快，易于书写和识别。\",\n    \"temperament\": \"杨紫的音律优美动听，读起来朗朗上口。\",\n    \"fiveele\": \"杨紫的五行属性为木，与水相生，具有生机勃勃、积极向上的特点。\",\n    \"samerate\": \"杨紫是一个比较常见的名字，重名率相对较高。\"\n}]","role":"assistant"}}],"created":1773655019,"id":"02177365501574170efbf1cf5c1ae3d0b3f284807454d29816b57","model":"doubao-lite-32k-character-250228","service_tier":"default","object":"chat.completion","usage":{"completion_tokens":181,"prompt_tokens":172,"total_tokens":353,"prompt_tokens_details":{"cached_tokens":0},"completion_tokens_details":{"reasoning_tokens":0}}}
+		
+		}
+		console.log('requestDoubao reuqest-----', res)
+		return res.data?.choices?.[0]?.message?.content || "生成失败" */
+	
+	
+	/* let res = {
 		"data": {
 			"choices": [{
 				"finish_reason": "stop",
@@ -36,8 +45,9 @@ export async function requestDoubao(messages) {
 		}
 	}
 	console.log('requestDoubao reuqest-----', res)
-	return res.data?.choices?.[0]?.message?.content || "生成失败"
-    /* let res = await uni.request({
+	return res.data?.choices?.[0]?.message?.content || "生成失败" */
+	
+    let res = await uni.request({
       url: API_URL,
       method: "POST",
       header: {
@@ -50,7 +60,7 @@ export async function requestDoubao(messages) {
       }
     })
 	
-    return res.data?.choices?.[0]?.message?.content || "生成失败" */
+    return res.data?.choices?.[0]?.message?.content || "生成失败"
   } catch (err) {
     console.error(err)
     uni.showToast({ icon: "none", title: "API请求失败" })

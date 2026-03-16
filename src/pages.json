@@ -23,6 +23,18 @@
 			"style": {
 				"navigationBarTitleText": "智能起名2"
 			}
+		},
+		{
+			"path": "pages/create/create",
+			"style": {
+				"navigationBarTitleText": "起名"
+			}
+		},
+		{
+			"path": "pages/score/score",
+			"style": {
+				"navigationBarTitleText": "名字打分"
+			}
 		}
 	],
     "tabBar": {
@@ -54,7 +66,7 @@
 		  			// "iconPath": "",
 		  			// "selectedIconPath": "",
 		  			"text": "智能起名"
-		  }
+		  }		  
 		]
 	},
 	"globalStyle": {

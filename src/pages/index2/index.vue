@@ -29,7 +29,7 @@
 
     <!-- 功能按钮区 -->
     <view class="func-buttons">
-      <view class="func-item" @click="funcClick">
+      <view class="func-item" @click="toggleModule('1')">
         <view class="func-icon blue">A+</view>
         <text class="func-text">智能起名+</text>
       </view>
@@ -37,7 +37,7 @@
         <view class="func-icon orange">宝</view>
         <text class="func-text">宝宝起名</text>
       </view>
-      <view class="func-item" @click="funcClick">
+      <view class="func-item" @click="toggleModule('2')">
         <view class="func-icon red">100</view>
         <text class="func-text">名字打分</text>
       </view>
@@ -48,15 +48,15 @@
     </view>
 
     <!-- 标签切换 -->
-    <!-- <view class="tab-bar">
-      <view class="tab-item active" @click="toggleModule('1')">宝宝起名</view>
-      <view class="tab-item" @click="toggleModule('2')">名字评分</view>
-      <view class="tab-item">智能起名</view>
-      <view class="tab-item">智能测名</view>
-    </view> -->
+    <view class="tab-bar">
+      <view class="tab-item" :class="{ 'active': currentModule === '1'}" @click="toggleModule('1')">宝宝起名</view>
+      <view class="tab-item" :class="{ 'active': currentModule === '2'}" @click="toggleModule('2')">名字评分</view>
+      <!-- <view class="tab-item">智能起名</view>
+      <view class="tab-item">智能测名</view> -->
+    </view>
 
     <!-- 表单区域 -->
-    <view class="form-card">
+    <view class="form-card" v-if="currentModule === '1'">
       <view class="form-row">
         <text class="form-label">姓氏</text>
         <input v-model="formData.surname" placeholder="请输入姓氏" class="form-input" />
@@ -99,7 +99,37 @@
         立即起名
       </button>
     </view>
-
+	<view class="form-card" v-if="currentModule === '2'">
+		<view class="form-row">
+		  <text class="form-label">姓</text>
+		  <input v-model="scoreForm.surname" placeholder="请输入姓" class="form-input" />
+		</view>
+		<view class="form-row">
+		  <text class="form-label">名</text>
+		  <input v-model="scoreForm.name" placeholder="请输入名" class="form-input" />
+		</view>
+		<view class="form-row">
+		  <text class="form-label">性别</text>
+				<radio-group @change="genderScoreChange" class="radio-group">
+					<label class="radio-item" v-for="(item, index) in genderList" :key="item.value">
+						<radio :value="item.value" :checked="item.value === scoreForm.gender" /><text>{{item.label}}</text>
+					</label>
+				</radio-group>
+		</view>
+		
+		<view class="form-row">
+		  <text class="form-label">生日</text>
+		  <picker mode="date" :value="scoreForm.birthday" @change="onScoreBirthdayChange" class="date-picker">
+		    <view class="picker-content">
+		      <text>{{ scoreForm.birthday || '请选择生日' }}</text>
+		      <text class="calendar-icon">📅</text>
+		    </view>
+		  </picker>
+		</view>
+		<button @click="scoreName" class="submit-btn">
+		  开始打分
+		</button>
+	</view>
     <!-- 热门功能 -->
     <!-- <view class="hot-functions">
       <view class="hot-title">
@@ -126,7 +156,7 @@
     </view> -->
 
     <!-- 结果区 -->
-	<view v-if="result" class="result-section">
+	<!-- <view v-if="result" class="result-section">
 		<view class="card" v-for="(_item, index) in result" :key="index">
 	  <view class="name">{{ _item.name }}</view>
 	  <view class="section"><text class="label">寓意：</text>{{ _item.meaning }}</view>
@@ -138,9 +168,8 @@
 	</view>
 	<view class="flex-row">
 	  <button size="mini" @click="generateName" class="change-btn">换一换</button>
-	  <!-- <button size="mini" type="primary" @click="addToCompare">加入对比</button> -->
 	</view>
-	</view>
+	</view> -->
     
 
     <!-- 对比区 -->
@@ -184,7 +213,11 @@ const nameTypeList = ref([
   { label: '不限', value: 'all' }
 ])
 const limitNum = ref(10)
-
+const currentModule = ref('1')
+const scoreForm = ref({
+	surname: '',
+	name: ''
+})
 // 看视频增加次数
 function watchVideo() {
   showLimitModal.value = false
@@ -295,7 +328,10 @@ async function generateName() {
   uni.setStorageSync('nameGeneratorUsage', usageData) */
   
   if (!formData.value.surname) return uni.showToast({ icon: 'none', title: '请输入姓氏' })
-  const genderName = formData.value.gender === '0' ? '男孩' : formData.value.gender === '1' ? '女孩' : ''
+  uni.navigateTo({
+  	url: '/pages/create/create?form=' + encodeURIComponent(JSON.stringify(formData.value))
+  })
+  /* const genderName = formData.value.gender === '0' ? '男孩' : formData.value.gender === '1' ? '女孩' : ''
   const nameNum = formData.value.nameType === 'all' ? '2或3' : formData.value.nameType
   const prompt = `
     请给${formData.value.birthday ? '出生日期' + formData.value.birthday : ''}姓氏【${formData.value.surname}】起五个好听的【${genderName}】名字，${nameNum}个字。
@@ -324,9 +360,16 @@ async function generateName() {
   } catch (e) {
 	  console.log('catch e----', e)
     uni.showToast({ icon: 'none', title: '解析失败' })
-  }
+  } */
 }
 
+async function scoreName() {
+	if (!scoreForm.value.surname) return uni.showToast({ icon: 'none', title: '请输入姓氏' })
+	if (!scoreForm.value.name) return uni.showToast({ icon: 'none', title: '请输入名字' })
+	uni.navigateTo({
+		url: '/pages/score/score?form=' + encodeURIComponent(JSON.stringify(scoreForm.value))
+	})
+}
 // 加入对比
 function addToCompare() {
   if (compareList.value.length >= 3) return uni.showToast({ icon: 'none', title: '最多对比3个' })
@@ -346,12 +389,20 @@ function nameTypeChange(e) {
 }
 function toggleModule(e) {
 	console.log('toggleModule----', e)
+	currentModule.value = e
 }
 function funcClick() {
 	uni.showToast({
 		title: '功能开发中，敬请期待...',
 		icon: 'none'
 	})
+}
+function genderScoreChange(evt) {
+	console.log('genderChange-----', evt)
+	scoreForm.value.gender = evt.detail.value
+}
+function onScoreBirthdayChange(e) {
+  scoreForm.value.birthday = e.detail.value
 }
 </script>
 
